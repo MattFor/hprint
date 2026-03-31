@@ -53,6 +53,32 @@ Formatted version using `std::format`.
 
 Width can be manually overridden
 
+## How to get it / Enable it 
+
+1. Through FetchContent
+
+```cmake
+include(FetchContent)
+
+FetchContent_Declare(
+    hprint
+    GIT_REPOSITORY https://github.com/MattFor/hprint.git
+    GIT_TAG v1.0.0
+)
+
+FetchContent_MakeAvailable(hprint)
+
+target_link_libraries(target_name PRIVATE hp::hprint)
+```
+
+2. Or already installed
+
+```cmake
+find_package(hprint CONFIG REQUIRED)
+
+target_link_libraries(target_name PRIVATE hp::hprint)
+```
+
 ## Requirements
 
 * C++23 or higher
