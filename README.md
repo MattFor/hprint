@@ -63,7 +63,7 @@ include(FetchContent)
 FetchContent_Declare(
     hprint
     GIT_REPOSITORY https://github.com/MattFor/hprint.git
-    GIT_TAG v1.0.0
+    GIT_TAG v1.1.0
 )
 
 FetchContent_MakeAvailable(hprint)
