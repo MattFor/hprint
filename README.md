@@ -13,7 +13,7 @@
 ## Usage
 
 ```cpp
-#include <hprint/hprint.hpp>
+#include <hprint>
 
 int main()
 {
@@ -90,4 +90,4 @@ MIT License © 2026
 
 See [LICENSE](LICENSE) for details.
 
-Version 1.0.0
+Version 1.1.0

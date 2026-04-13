@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.23)
-project(hprint VERSION 1.0.0 LANGUAGES CXX)
+project(hprint VERSION 1.1.0 LANGUAGES CXX)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -40,9 +40,9 @@ write_basic_package_version_file(
 )
 
 install(FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/hprintConfig.cmake
-        ${CMAKE_CURRENT_BINARY_DIR}/hprintConfigVersion.cmake
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/hprint
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/hprint
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/hprint.hpp
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
 # Demo

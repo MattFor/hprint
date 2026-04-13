@@ -1,0 +1,8 @@
+#ifndef HPRINT_SINGLE_HEADER_
+#define HPRINT_SINGLE_HEADER_
+
+#pragma once
+
+#include "hprint.hpp"
+
+#endif // HPRINT_SINGLE_HEADER_

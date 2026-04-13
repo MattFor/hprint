@@ -1,4 +1,4 @@
-#include <hprint/hprint.hpp>
+#include <hprint>
 
 int main()
 {
