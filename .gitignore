@@ -1,4 +1,4 @@
 .idea
 build
 install
-cmake-build-debug
+cmake-build-*
