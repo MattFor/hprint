@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.3.0] - 07:32 CEST 30-10-2026
+
 ### Added
 
 - UTF-8 borders: `hp::print<"─">(...)`, `hp::print<"«", "»">(...)`. The border template parameters are now

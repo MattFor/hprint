@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
 
 project(hprint
-        VERSION 1.2.0
+        VERSION 1.3.0
         DESCRIPTION "Minimal, header-only C++ utility for printing centered terminal headers"
         HOMEPAGE_URL "https://github.com/MattFor/hprint"
         LANGUAGES CXX

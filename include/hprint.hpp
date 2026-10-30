@@ -6,9 +6,9 @@
 // Macros, so the version can be tested with #if
 // NOLINTBEGIN(cppcoreguidelines-macro-usage,cppcoreguidelines-macro-to-enum,modernize-macro-to-enum)
 #define HPRINT_VERSION_MAJOR 1
-#define HPRINT_VERSION_MINOR 2
+#define HPRINT_VERSION_MINOR 3
 #define HPRINT_VERSION_PATCH 0
-#define HPRINT_VERSION_STRING "1.2.0"
+#define HPRINT_VERSION_STRING "1.3.0"
 // NOLINTEND(cppcoreguidelines-macro-usage,cppcoreguidelines-macro-to-enum,modernize-macro-to-enum)
 
 #include <array>
