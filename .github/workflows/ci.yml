@@ -2,11 +2,34 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
   workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  format:
+    name: Format
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install clang-format
+        run: pipx install clang-format==23.1.0
+
+      - name: clang-format
+        run: git ls-files '*.cpp' '*.hpp' include/hprint | xargs clang-format --dry-run --Werror
+
+      - name: Prettier
+        run: npx --yes prettier@3.9.6 --check .
+
   build:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
@@ -16,23 +39,23 @@ jobs:
         include:
           - name: Linux / GCC 14
             os: ubuntu-24.04
-            cc: gcc-14
             cxx: g++-14
-          - name: Linux / Clang 18
+          - name: Linux / Clang 20
             os: ubuntu-24.04
-            cc: clang-18
-            cxx: clang++-18
+            cxx: clang++-20
           - name: macOS / AppleClang
             os: macos-14
           - name: Windows / MSVC
             os: windows-2022
-
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+
+      - name: Install Clang
+        if: matrix.cxx == 'clang++-20'
+        run: wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- 20
 
       - name: Configure
         env:
-          CC: ${{ matrix.cc }}
           CXX: ${{ matrix.cxx }}
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 
@@ -42,14 +65,11 @@ jobs:
       - name: Test
         run: ctest --test-dir build --build-config Release --output-on-failure
 
-      - name: Run demo
-        run: cmake --build build --config Release --target hprint_demo
-
   install:
     name: Install and consume
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Build and install
         env:
@@ -64,17 +84,32 @@ jobs:
           CXX: g++-14
         run: |
           mkdir -p consumer
-          cat > consumer/CMakeLists.txt <<'EOF'
+          cat > consumer/CMakeLists.txt <<'CMAKE'
           cmake_minimum_required(VERSION 3.23)
           project(consumer LANGUAGES CXX)
           find_package(hprint CONFIG REQUIRED)
           add_executable(consumer main.cpp)
           target_link_libraries(consumer PRIVATE hp::hprint)
-          EOF
-          cat > consumer/main.cpp <<'EOF'
+          CMAKE
+          cat > consumer/main.cpp <<'CPP'
           #include <hprint>
           int main() { hp::print<'*'>("find_package works", 40); }
-          EOF
+          CPP
           cmake -S consumer -B consumer/build -DCMAKE_PREFIX_PATH="$PWD/prefix"
           cmake --build consumer/build
           ./consumer/build/consumer
+
+  tidy:
+    name: clang-tidy
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install clang-tidy
+        run: pipx install clang-tidy==21.1.1
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_CXX_COMPILER=g++-14 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+      - name: clang-tidy
+        run: clang-tidy -p build --quiet --warnings-as-errors='*' test/test_hprint.cpp example/demo.cpp

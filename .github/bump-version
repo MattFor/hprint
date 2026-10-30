@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Run by my own macro - do not touch
+set -euo pipefail
+
+IFS=.- read -r major minor patch _ <<<"$1"
+sed -i -E \
+    -e "s/^(#define HPRINT_VERSION_MAJOR ).*/\1$major/" \
+    -e "s/^(#define HPRINT_VERSION_MINOR ).*/\1$minor/" \
+    -e "s/^(#define HPRINT_VERSION_PATCH ).*/\1$patch/" \
+    -e "s/^(#define HPRINT_VERSION_STRING ).*/\1\"$1\"/" \
+    include/hprint.hpp
+
+sed -i -E "s/^( *GIT_TAG +)v[0-9][^ ]*$/\1v$1/" README.md

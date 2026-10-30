@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  release:
+    name: GitHub release
+    needs: ci
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check the tag against the version
+        # The same files and patterns as the release script; a file without a version is skipped
+        run: |
+          v=${GITHUB_REF_NAME#v}
+          check() { [ -z "$2" ] || [ "$2" = "$v" ] || { echo "::error file=$1::$1 says $2, the tag says $v"; exit 1; }; }
+          [ ! -f pyproject.toml ] || check pyproject.toml "$(sed -n '/^\[project\]/,/^\[/ s/^version *= *"\(.*\)"/\1/p' pyproject.toml)"
+          [ ! -f Cargo.toml ] || check Cargo.toml "$(sed -n '/^\[package\]/,/^\[/ s/^version *= *"\(.*\)"/\1/p' Cargo.toml)"
+          [ ! -f package.json ] || check package.json "$(node -p 'require("./package.json").version ?? ""')"
+          [ ! -f CMakeLists.txt ] || check CMakeLists.txt "$(sed -Ezn 's/.*project\([^)]*VERSION[[:space:]]+([0-9][^[:space:])]*).*/\1/p' CMakeLists.txt | tr -d '\0')"
+
+      - name: Release notes from the changelog
+        run: |
+          awk -v v="## [${GITHUB_REF_NAME#v}]" 'index($0, v) == 1 {p = 1; next} /^## \[/ {p = 0} p' CHANGELOG.md > notes.md
+          grep -q '[^[:space:]]' notes.md || { echo "::error file=CHANGELOG.md::nothing under ## [${GITHUB_REF_NAME#v}]"; exit 1; }
+
+      - uses: softprops/action-gh-release@v3
+        with:
+          body_path: notes.md
+          prerelease: ${{ contains(github.ref_name, '-') }}

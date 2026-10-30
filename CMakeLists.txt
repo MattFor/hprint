@@ -29,6 +29,7 @@ target_compile_features(hprint INTERFACE cxx_std_23)
 if (HPRINT_BUILD_EXAMPLES)
     add_executable(hprint_demo example/demo.cpp)
     target_link_libraries(hprint_demo PRIVATE hp::hprint)
+    target_compile_options(hprint_demo PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/utf-8>)
 endif ()
 
 # Tests
@@ -37,6 +38,8 @@ if (HPRINT_BUILD_TESTS)
 
     add_executable(hprint_tests test/test_hprint.cpp)
     target_link_libraries(hprint_tests PRIVATE hp::hprint)
+    target_compile_options(hprint_tests PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/utf-8>)
+    target_compile_definitions(hprint_tests PRIVATE HPRINT_EXPECTED_VERSION="${PROJECT_VERSION}")
 
     add_test(NAME hprint_tests COMMAND hprint_tests)
 endif ()
