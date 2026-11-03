@@ -1,7 +1,5 @@
 # Changelog
 
-## [Unreleased]
-
 ## [1.3.0] - 07:32 CEST 30-10-2026
 
 ### Added
@@ -64,6 +62,7 @@
 
 - Initial release.
 
+[1.3.0]: https://github.com/MattFor/hprint/releases/tag/v1.3.0
 [1.2.0]: https://github.com/MattFor/hprint/releases/tag/v1.2.0
 [1.1.0]: https://github.com/MattFor/hprint/releases/tag/v1.1.0
 [1.0.0]: https://github.com/MattFor/hprint/releases/tag/v1.0.0
