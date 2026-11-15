@@ -52,7 +52,7 @@ jobs:
             os: ubuntu-24.04
             cxx: clang++-20
           - name: macOS / AppleClang
-            os: macos-14
+            os: macos-15
           - name: Windows / MSVC
             os: windows-2022
     steps:
