@@ -30,6 +30,14 @@ jobs:
       - name: Prettier
         run: npx --yes prettier@3.9.6 --check .
 
+      - name: Install ruff
+        run: pipx install ruff==0.16.5
+
+      - name: Ruff
+        run: |
+          ruff check --output-format=github .
+          ruff format --check .
+
   build:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}

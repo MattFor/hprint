@@ -4,12 +4,12 @@
 [![Release](https://img.shields.io/github/v/release/MattFor/hprint)](https://github.com/MattFor/hprint/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-**Minimal, header-only C++ utility for printing centered terminal headers.**
+**Minimal, header-only C++ utility for printing centred terminal headers.**
 
 ## Features
 
 - Header-only (simply include and go)
-- Centered text with customizable borders
+- Centred text with customisable borders
 - Compile-time borders: a character, or a UTF-8 string such as `─`
 - Optional formatted input
 - Prints to stdout, stderr or any `std::FILE*`
@@ -18,6 +18,38 @@
   draws them
 - Lines can be built at compile time
 - No dependencies beyond the standard library
+
+## Requirements
+
+- C++23 or higher (`<print>` and `<format>`)
+- GCC 14+, Clang 18+ with libc++/libstdc++, or MSVC 19.40+
+- Any platform - terminal size is detected on POSIX and Windows, and falls back to 80 columns elsewhere
+
+## Install
+
+1. Through FetchContent
+
+```cmake
+include(FetchContent)
+
+FetchContent_Declare(
+        hprint
+        GIT_REPOSITORY https://github.com/MattFor/hprint.git
+        GIT_TAG v1.3.0
+)
+
+FetchContent_MakeAvailable(hprint)
+
+target_link_libraries(target_name PRIVATE hp::hprint)
+```
+
+2. Or already installed
+
+```cmake
+find_package(hprint CONFIG REQUIRED)
+
+target_link_libraries(target_name PRIVATE hp::hprint)
+```
 
 ## Usage
 
@@ -57,9 +89,9 @@ Example output:
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 3 warnings !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ```
 
-## What it has
+### What it has
 
-### `hp::border`
+#### `hp::border`
 
 ```cpp
 struct border
@@ -73,7 +105,7 @@ What the template parameters below take: `'='` or `"─"`. A border wider than o
 fits, and the columns left over are spaces next to the title, so the line is always exactly `width` wide. `""` gives
 spaces only.
 
-### `hp::print`
+#### `hp::print`
 
 ```cpp
 template<hp::border L = '=', hp::border R = L>
@@ -86,9 +118,9 @@ template<hp::border L = '=', hp::border R = L>
 void print(std::FILE* stream, std::string_view title, int width);
 ```
 
-Print a centered header.
+Print a centred header.
 
-### `hp::printf`
+#### `hp::printf`
 
 ```cpp
 template<hp::border L = '=', hp::border R = L, class... Args>
@@ -100,7 +132,7 @@ void printf(std::FILE* stream, std::format_string<Args...> fmt, Args&&... args);
 
 Formatted version using `std::format`, at the detected terminal width.
 
-### `hp::printfw`
+#### `hp::printfw`
 
 ```cpp
 template<hp::border L = '=', hp::border R = L, class... Args>
@@ -112,7 +144,7 @@ void printfw(std::FILE* stream, int width, std::format_string<Args...> fmt, Args
 
 Formatted version at an explicit width.
 
-### `hp::make_header_line`
+#### `hp::make_header_line`
 
 ```cpp
 template<hp::border L = '=', hp::border R = L>
@@ -123,7 +155,7 @@ Builds the line instead of printing it, at compile time too:
 `static_assert(hp::make_header_line("hi", 10) == "=== hi ===")`. Returns `title` unchanged when it does not fit in
 `width`. A non-positive `width` falls back to `hp::default_width`.
 
-### `hp::terminal_width`
+#### `hp::terminal_width`
 
 ```cpp
 [[nodiscard]] int terminal_width() noexcept;                  // stdout
@@ -133,7 +165,7 @@ Builds the line instead of printing it, at compile time too:
 Columns of the terminal the stream writes to. When it is not a terminal: `COLUMNS` if that is a positive number (POSIX),
 otherwise `hp::default_width` (80).
 
-### `hp::display_width`
+#### `hp::display_width`
 
 ```cpp
 [[nodiscard]] constexpr std::size_t display_width(std::string_view text) noexcept;
@@ -142,39 +174,7 @@ otherwise `hp::default_width` (80).
 Columns `text` takes in a terminal: wide characters count two, combining marks and escape sequences (colours,
 hyperlinks, `tput sgr0`) none, and an emoji with a skin tone, `VS16` or ZWJ joins (👨‍👩‍👧) counts as one emoji.
 
-## How to get it / Enable it
-
-1. Through FetchContent
-
-```cmake
-include(FetchContent)
-
-FetchContent_Declare(
-        hprint
-        GIT_REPOSITORY https://github.com/MattFor/hprint.git
-        GIT_TAG v1.3.0
-)
-
-FetchContent_MakeAvailable(hprint)
-
-target_link_libraries(target_name PRIVATE hp::hprint)
-```
-
-2. Or already installed
-
-```cmake
-find_package(hprint CONFIG REQUIRED)
-
-target_link_libraries(target_name PRIVATE hp::hprint)
-```
-
-## Requirements
-
-- C++23 or higher (`<print>` and `<format>`)
-- GCC 14+, Clang 18+ with libc++/libstdc++, or MSVC 19.40+
-- Any platform - terminal size is detected on POSIX and Windows, and falls back to 80 columns elsewhere
-
-## Notes and limitations
+### Notes and limitations
 
 - `hp::display_width` follows the Unicode 16 East Asian Width and combining-mark tables (regenerated with
   `python3 tools/unicode-tables.py`) plus the emoji rules above. It is not full grapheme segmentation (UAX #29), and
